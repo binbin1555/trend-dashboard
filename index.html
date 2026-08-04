@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>趋势投资 · 记账</title>
+<style>
+:root{--bg:#f2f3f5;--card:#fff;--txt:#1d2129;--sub:#86909c;--line:#e5e6eb;
+      --green:#00a870;--red:#f53f3f;--orange:#ff7d00;--blue:#165dff;--purple:#722ed1}
+@media(prefers-color-scheme:dark){:root{--bg:#17171a;--card:#232324;--txt:#f2f3f5;
+      --sub:#8a8a8f;--line:#333336}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+     padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:680px;margin:0 auto;padding:12px}
+.hd{background:#1d2129;color:#fff;border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.hd h1{margin:0;font-size:18px}
+.hd .sub{margin-top:5px;font-size:12px;color:#a9aeb8;line-height:1.7}
+.card{background:var(--card);border-radius:12px;padding:16px 18px;margin-bottom:12px;
+      border:1px solid var(--line)}
+h2{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
+.bar{width:4px;height:15px;border-radius:2px;display:inline-block}
+.b-g{background:var(--green)}.b-r{background:var(--red)}.b-b{background:var(--blue)}
+.b-p{background:var(--purple)}
+label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px}
+input[type=text],input[type=password],input[type=number]{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+  font-size:15px;background:var(--bg);color:var(--txt)}
+button{width:100%;padding:13px;border:0;border-radius:9px;font-size:15px;font-weight:600;
+       background:var(--blue);color:#fff;cursor:pointer;margin-top:10px}
+button:disabled{opacity:.45}
+button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);font-weight:400}
+button.danger{background:var(--red)}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;
+      display:flex;gap:11px;align-items:flex-start}
+.item.on{border-color:var(--green);background:rgba(0,168,112,.06)}
+.item.sell.on{border-color:var(--red);background:rgba(245,63,63,.06)}
+.chk{width:24px;height:24px;flex:0 0 24px;border:2px solid var(--line);border-radius:7px;
+     display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;
+     margin-top:2px;cursor:pointer;user-select:none}
+.item.on .chk{background:var(--green);border-color:var(--green)}
+.item.sell.on .chk{background:var(--red);border-color:var(--red)}
+.body{flex:1;min-width:0}
+.nm{font-size:16px;font-weight:700}
+.sym{font-size:12px;color:var(--sub);margin-left:6px;font-family:ui-monospace,Consolas,monospace}
+.meta{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.8}
+.kv{display:inline-block;background:var(--bg);border-radius:4px;padding:1px 7px;margin:0 4px 4px 0}
+.px{margin-top:9px;display:none;gap:8px;align-items:center}
+.item.on .px{display:flex}
+.px input{flex:1;padding:8px 10px;font-size:14px}
+.px span{font-size:12px;color:var(--sub);white-space:nowrap}
+.empty{text-align:center;color:var(--sub);padding:22px;font-size:13px;
+       border:1px dashed var(--line);border-radius:10px}
+.grid{display:flex;flex-wrap:wrap;gap:8px}
+.stat{flex:1;min-width:96px;background:var(--bg);border-radius:8px;padding:10px 12px}
+.stat .v{font-size:18px;font-weight:700}.stat .k{font-size:11px;color:var(--sub);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--sub);font-weight:500;font-size:11px}
+td.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.msg{padding:11px 13px;border-radius:9px;font-size:13px;line-height:1.7;margin-bottom:12px}
+.msg.err{background:rgba(245,63,63,.12);color:var(--red)}
+.msg.ok{background:rgba(0,168,112,.12);color:var(--green)}
+.msg.warn{background:rgba(255,125,0,.12);color:var(--orange)}
+.mini{font-size:12px;color:var(--sub);line-height:1.9}
+.bs{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);
+    padding:12px 18px calc(12px + env(safe-area-inset-bottom));margin:0 -18px -16px;
+    border-radius:0 0 12px 12px}
+a{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <h1>趋势投资 · 记账</h1>
+    <div class="sub" id="hdsub">加载中…</div>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const OWNER = 'binbin1555';
+const REPO  = '-';                       // 私有数据仓库
+const DASH  = 'data/dashboard.json';
+const PEND  = 'data/pending_actions.json';
+const PATK  = 'trend_pat';
+
+const $ = s => document.querySelector(s);
+const app = $('#app');
+let DATA = null, marks = {};
+
+/* ---------- UTF-8 安全的 base64 ---------- */
+const b64e = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+const b64d = s => new TextDecoder().decode(
+  Uint8Array.from(atob(s.replace(/\n/g,'')), c => c.charCodeAt(0)));
+
+const pat = () => localStorage.getItem(PATK) || '';
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => Math.round(n).toLocaleString('en-US');
+
+async function gh(path, opt={}) {
+  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    ...opt,
+    headers: {Authorization:`token ${pat()}`, Accept:'application/vnd.github+json',
+              'Content-Type':'application/json', ...(opt.headers||{})}
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`${r.status} ${r.statusText} — ${t.slice(0,140)}`);
+  }
+  return r.json();
+}
+
+/* ---------- PAT 设置页 ---------- */
+function setupView(err) {
+  $('#hdsub').textContent = '首次使用需要授权';
+  app.innerHTML = `
+  ${err ? `<div class="msg err"><b>读取失败</b><br>${esc(err)}</div>` : ''}
+  <div class="card">
+    <h2><span class="bar b-b"></span>连接你的私有数据仓库</h2>
+    <div class="mini" style="margin-bottom:12px">
+      本页面<b>不含任何数据</b>，也不会把你的令牌发给任何第三方——令牌只存在这台设备的浏览器里，
+      直接与 GitHub 通信。<br><br>
+      <b>怎么获取令牌：</b><br>
+      ① 打开 <a href="https://github.com/settings/tokens/new?scopes=repo&description=trend-dashboard" target="_blank">这个链接</a>（会自动勾好权限）<br>
+      ② 页面最下方点 <b>Generate token</b><br>
+      ③ 复制那串 <code>ghp_</code> 开头的字符，粘贴到下面
+    </div>
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+    <button onclick="savePat()">保存并加载</button>
+  </div>`;
+}
+window.savePat = () => {
+  const v = $('#pat').value.trim();
+  if (!v) return;
+  localStorage.setItem(PATK, v);
+  load();
+};
+window.resetPat = () => {
+  if (confirm('清除本机保存的令牌？')) { localStorage.removeItem(PATK); setupView(); }
+};
+
+/* ---------- 主视图 ---------- */
+function render() {
+  const d = DATA, cap = 74400;
+  $('#hdsub').innerHTML =
+    `数据日期 <b style="color:#fff">${esc(d.asof)}</b>　·　纪律 ${esc(d.version)}<br>`+
+    `生成于 ${esc(d.generated_at)}　·　余额 ${Number(d.balance).toFixed(2)} 元`;
+
+  const buys = d.buys||[], sells = d.sells||[], pos = d.positions||[];
+
+  let h = '';
+
+  /* 买入 */
+  h += `<div class="card"><h2><span class="bar b-g"></span>买入候选 · ${buys.length}</h2>`;
+  if (!buys.length) h += `<div class="empty">今日无符合纪律的候选<br><span style="font-size:12px">按纪律 §四：空仓等待，不降低标准</span></div>`;
+  buys.forEach((b,i) => {
+    h += `<div class="item" id="bi${i}" onclick="tog('b',${i})">
+      <div class="chk">✓</div><div class="body">
+        <div><span class="nm">${esc(b.name)}</span><span class="sym">${esc(b.symbol)}</span></div>
+        <div class="meta">
+          <span class="kv">建议 <b>${money(b.shares)}</b> 股</span>
+          <span class="kv">约 <b>${money(b.amount)}</b> 元</span>
+          <span class="kv">右侧第 <b>${esc(b.days)}</b> 天</span>
+          <span class="kv">强度 <b>${Number(b.strength).toFixed(1)}</b></span>
+          <span class="kv">${esc(b.industry)}</span>
+        </div>
+        <div class="px" onclick="event.stopPropagation()">
+          <span>成交价</span>
+          <input type="number" step="0.001" id="bp${i}" value="${b.price}">
+          <span>股数</span>
+          <input type="number" step="100" id="bs${i}" value="${b.shares}">
+        </div>
+      </div></div>`;
+  });
+  h += `</div>`;
+
+  /* 卖出 */
+  h += `<div class="card"><h2><span class="bar b-r"></span>卖出触发 · ${sells.length}</h2>`;
+  if (!sells.length) h += `<div class="empty">无卖出信号</div>`;
+  sells.forEach((s,i) => {
+    h += `<div class="item sell" id="si${i}" onclick="tog('s',${i})">
+      <div class="chk">✓</div><div class="body">
+        <div><span class="nm">${esc(s.name)}</span><span class="sym">${esc(s.symbol||'')}</span></div>
+        <div class="meta">
+          <span class="kv">${s.action==='sell_all'?'全部清仓':'减仓 30%'}</span>
+          <span class="kv"><b>${money(s.shares)}</b> 股</span>
+          <span class="kv">触发 <b>${esc(s.trigger)}</b></span>
+          <span class="kv">${esc(s.reason)}</span>
+        </div>
+        <div class="px" onclick="event.stopPropagation()">
+          <span>成交价</span>
+          <input type="number" step="0.001" id="sp${i}" value="${s.price}">
+          <span>股数</span>
+          <input type="number" step="100" id="ss${i}" value="${s.shares}">
+        </div>
+      </div></div>`;
+  });
+  h += `</div>`;
+
+  /* 提交 */
+  if (buys.length || sells.length) {
+    h += `<div class="card"><div class="mini">勾选你<b>实际成交</b>的标的。价格默认用收盘价，
+      若你挂涨跌停价在开盘成交，请手动改成真实成交价——绩效统计全靠它。</div>
+      <button id="submit" onclick="submit()">提交记账</button>
+      <div class="mini" style="margin-top:8px;text-align:center">未勾选的不会被记录</div></div>`;
+  }
+
+  /* 持仓 */
+  h += `<div class="card"><h2><span class="bar b-p"></span>当前持仓 · ${pos.length}</h2>`;
+  if (!pos.length) h += `<div class="empty">当前空仓</div>`;
+  else {
+    h += `<table><tr><th>标的</th><th class="n">股数</th><th class="n">成本</th><th class="n">现价</th><th class="n">浮盈</th></tr>`;
+    pos.forEach(p => { h += `<tr><td>${esc(p.name)}</td><td class="n">${money(p.shares)}</td>
+      <td class="n">${Number(p.avg_price).toFixed(3)}</td><td class="n">${Number(p.last).toFixed(2)}</td>
+      <td class="n" style="color:${p.pnl_pct>=0?'var(--green)':'var(--red)'}">${p.pnl_pct>=0?'+':''}${Number(p.pnl_pct).toFixed(2)}%</td></tr>`; });
+    h += `</table>`;
+  }
+  const e = d.equity||{};
+  h += `<div class="mini" style="margin-top:10px">现金 ${money(e.cash||0)} 元　·
+    持仓市值 ${money(e.holdings||0)} 元　·　总净值 <b>${money(e.total||0)}</b> 元</div></div>`;
+
+  /* 绩效 */
+  const p = d.perf||{};
+  h += `<div class="card"><h2><span class="bar b-p"></span>绩效</h2>`;
+  if (!p.rounds && !pos.length) h += `<div class="empty">尚无交易记录</div>`;
+  else {
+    h += `<div class="grid">
+      <div class="stat"><div class="v">${((p.total_return||0)*100).toFixed(2)}%</div><div class="k">总收益率</div></div>
+      <div class="stat"><div class="v">${(p.max_drawdown_pct||0).toFixed(2)}%</div><div class="k">最大回撤</div></div>
+      <div class="stat"><div class="v">${p.wins||0}/${p.losses||0}</div><div class="k">盈利/亏损单</div></div>
+      <div class="stat"><div class="v">${p.pl_ratio?Number(p.pl_ratio).toFixed(2):'—'}</div><div class="k">盈亏比</div></div>
+    </div>`;
+    if (p.sample_warning) h += `<div class="msg warn" style="margin-top:10px">已完成 ${p.rounds||0} 单（&lt;30），胜率与盈亏比<b>样本量不足，不具统计意义</b></div>`;
+  }
+  h += `</div>`;
+
+  h += `<div class="card"><button class="ghost" onclick="load()">刷新</button>
+        <button class="ghost" onclick="resetPat()">清除本机令牌</button>
+        <div class="mini" style="margin-top:10px;text-align:center">
+        趋势动物指标仅供参考，不构成投资建议，交易盈亏自负</div></div>`;
+
+  app.innerHTML = h;
+}
+
+window.tog = (t,i) => {
+  const el = document.getElementById(t+'i'+i);
+  el.classList.toggle('on');
+  marks[t+i] = el.classList.contains('on');
+};
+
+/* ---------- 提交 ---------- */
+window.submit = async () => {
+  const btn = $('#submit');
+  btn.disabled = true; btn.textContent = '提交中…';
+  try {
+    const acts = [];
+    (DATA.buys||[]).forEach((b,i) => { if (marks['b'+i]) acts.push({
+      action:'buy', tmId:b.tmId, name:b.name, symbol:b.symbol, industry:b.industry,
+      shares:parseInt($('#bs'+i).value)||b.shares,
+      price:parseFloat($('#bp'+i).value)||b.price, note:'面板记账'}); });
+    (DATA.sells||[]).forEach((s,i) => { if (marks['s'+i]) acts.push({
+      action:'sell', tmId:s.tmId, name:s.name, symbol:s.symbol, trigger:s.trigger,
+      shares:parseInt($('#ss'+i).value)||s.shares,
+      price:parseFloat($('#sp'+i).value)||s.price, note:'面板记账'}); });
+
+    if (!acts.length) { alert('没有勾选任何标的'); btn.disabled=false; btn.textContent='提交记账'; return; }
+
+    let sha = null;
+    try { sha = (await gh(PEND)).sha; } catch(e) { /* 文件不存在则新建 */ }
+    const body = {
+      message: `记账: ${DATA.asof} 共 ${acts.length} 笔（面板提交）`,
+      content: b64e(JSON.stringify(acts, null, 1)),
+      ...(sha ? {sha} : {})
+    };
+    await gh(PEND, {method:'PUT', body: JSON.stringify(body)});
+
+    app.insertAdjacentHTML('afterbegin',
+      `<div class="msg ok"><b>✅ 已提交 ${acts.length} 笔</b><br>
+       ${acts.map(a=>`${a.action==='buy'?'买入':'卖出'} ${esc(a.name)} ${money(a.shares)} 股 @${a.price}`).join('<br>')}
+       <br><br>下一次每日运行（北京时间 19:00）会写入交易流水，并在日报顶部回执确认。</div>`);
+    btn.textContent = '已提交';
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch (e) {
+    alert('提交失败：' + e.message);
+    btn.disabled = false; btn.textContent = '重试提交';
+  }
+};
+
+/* ---------- 加载 ---------- */
+async function load() {
+  if (!pat()) return setupView();
+  $('#hdsub').textContent = '加载中…';
+  app.innerHTML = '<div class="card"><div class="empty">正在从私有仓库读取…</div></div>';
+  try {
+    const f = await gh(DASH);
+    DATA = JSON.parse(b64d(f.content));
+    marks = {};
+    render();
+  } catch (e) {
+    if (String(e.message).startsWith('401') || String(e.message).startsWith('403'))
+      setupView('令牌无效或权限不足，请重新生成（需要 repo 权限）。\n' + e.message);
+    else if (String(e.message).startsWith('404'))
+      setupView('找不到数据文件。请先让每日任务至少成功运行一次。\n' + e.message);
+    else setupView(e.message);
+  }
+}
+load();
+</script>
+</body>
+</html>
