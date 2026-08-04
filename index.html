@@ -314,6 +314,26 @@ function viewPerf(d,p,e){
     <div class="mini" style="margin-top:8px">记录纪律筛出的每个信号后续表现，与你是否真买无关。样本足够后才能判断纪律有效性。</div>`;
   h+=`</div>`; }
 
+  const bt=d.by_cap_tier||[], rt=d.rounds_by_tier||[];
+  if(rt.length||bt.length){
+    h+=`<div class="card"><h2><span class="bar b-o"></span>市值分层<span class="n">大盘还是小盘更适合</span></h2>`;
+    if(rt.length){
+      h+=`<div class="mini" style="margin-bottom:8px"><b>实际成交轮次</b>（真金白银，权威依据）</div>
+      <table><tr><th>市值层</th><th class="n">单数</th><th class="n">胜率</th><th class="n">平均收益</th></tr>
+      ${rt.map(x=>`<tr><td>${esc(x.tier)}</td><td class="n">${x.n}</td>
+      <td class="n">${P(x.win_rate,1)}%</td>
+      <td class="n" style="color:${col(x.avg)}">${sign(x.avg)}%</td></tr>`).join('')}</table>`;
+    }
+    if(bt.length){
+      h+=`<div class="mini" style="margin:12px 0 8px"><b>信号跟踪</b>（含未买入的，假想收益）</div>
+      <table><tr><th>市值层</th><th class="n">信号后</th><th class="n">样本</th><th class="n">平均</th><th class="n">上涨占比</th></tr>
+      ${bt.map(x=>`<tr><td>${esc(x.tier)}</td><td class="n">第${x.day}日</td><td class="n">${x.n}</td>
+      <td class="n" style="color:${col(x.avg)}">${sign(x.avg)}%</td>
+      <td class="n">${P(x.win,1)}%</td></tr>`).join('')}</table>`;
+    }
+    h+=`<div class="mini" style="margin-top:8px">分层口径：小盘&lt;100亿 · 中盘100-500亿 · 大盘500-2000亿 · 超大盘&gt;2000亿</div></div>`;
+  }
+
   const sd=d.signal_detail||[];
   if(sd.length && d.config.tracking_mode!=='off'){
     h+=`<div class="card"><h2><span class="bar b-o"></span>逐只信号<span class="n">${sd.length} 个跟踪中</span></h2>
