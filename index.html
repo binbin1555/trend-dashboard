@@ -168,7 +168,7 @@ function render(){
 
   if(tab==='today') h+=viewToday(d,c);
   if(tab==='hold')  h+=viewHold(d,e);
-  if(tab==='perf')  h+=viewPerf(d,p,e);
+  if(tab==='perf')  h+=viewDiag(d)+viewPerf(d,p,e);
   if(tab==='hist')  h+=viewHist(d);
 
   h+=`<div class="card"><button class="ghost" onclick="load()">刷新数据</button>
@@ -289,6 +289,35 @@ function viewHold(d,e){
       </div></div></div>`;
   });
   h+=`</div>`;
+  return h;
+}
+
+function viewDiag(d){
+  // 面板只负责显示后端算好的字符串，不做任何判断——
+  // 同一个结论在前后端各写一遍迟早分叉（总盈亏曾因此显示成 −总资产）。
+  const g=d.diag; if(!g) return '';
+  const pct=Math.min(100,(g.rounds||0)/(g.target||400)*100);
+  const warn=(g.headline||'').indexOf('⚠')>=0;
+  let h=`<div class="card"><h2><span class="bar ${warn?'b-r':'b-p'}"></span>策略体检
+    <span class="n">这套东西到底行不行</span></h2>
+    <div class="msg ${warn?'m-err':'m-ok'}" style="margin-bottom:11px">
+      <b>${esc(g.headline||'')}</b><br>${esc(g.plain||'')}</div>
+    <div class="mini" style="margin-bottom:5px">攒够样本的进度　<b>${g.rounds||0}</b> / ${g.target||400} 笔</div>
+    <div style="height:7px;background:var(--soft);border-radius:4px;overflow:hidden;margin-bottom:7px">
+      <div style="height:100%;width:${pct}%;background:var(--blue)"></div></div>
+    <div class="mini" style="margin-bottom:11px">${esc(g.eta||'')}</div>`;
+  if((g.items||[]).length)
+    h+=`<table>${g.items.map(x=>`<tr><td>${esc(x.k)}
+      ${x.note?`<br><span class="mini">${esc(x.note)}</span>`:''}</td>
+      <td class="n"><b>${esc(x.v)}</b></td></tr>`).join('')}</table>`;
+  if((g.redlines||[]).length)
+    h+=`<div class="msg m-err" style="margin-top:11px"><b>⚠ 已触发红线</b><br>
+      ${g.redlines.map(esc).join('<br>')}</div>`;
+  h+=`<div class="mini" style="margin-top:11px">
+    <b>这条线怎么来的</b>：把同一套规则模拟跑几万遍，每遍规则相同、只有输赢顺序不同（这就是运气），
+    看最差的 5% 差到什么程度。比它还差，就不像是运气了。<br>
+    <b>为什么要等</b>：样本不够时，「策略不行」和「运气不好」长得一模一样。
+    这段时间里系统会一直说「还不能判断」——这不是敷衍，是当下唯一诚实的答案。</div></div>`;
   return h;
 }
 
