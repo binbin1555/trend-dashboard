@@ -3,309 +3,429 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>趋势投资 · 记账</title>
+<title>趋势投资</title>
 <style>
-:root{--bg:#f2f3f5;--card:#fff;--txt:#1d2129;--sub:#86909c;--line:#e5e6eb;
+:root{--bg:#f2f3f5;--card:#fff;--txt:#1d2129;--sub:#86909c;--line:#e5e6eb;--soft:#f7f8fa;
       --green:#00a870;--red:#f53f3f;--orange:#ff7d00;--blue:#165dff;--purple:#722ed1}
 @media(prefers-color-scheme:dark){:root{--bg:#17171a;--card:#232324;--txt:#f2f3f5;
-      --sub:#8a8a8f;--line:#333336}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);
-     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-     padding-bottom:env(safe-area-inset-bottom)}
-.wrap{max-width:680px;margin:0 auto;padding:12px}
-.hd{background:#1d2129;color:#fff;border-radius:12px;padding:16px 18px;margin-bottom:12px}
-.hd h1{margin:0;font-size:18px}
+      --sub:#8a8a8f;--line:#333336;--soft:#2b2b2d}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-size:15px;
+     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:700px;margin:0 auto;padding:12px 12px calc(90px + env(safe-area-inset-bottom))}
+.hd{background:#1d2129;color:#fff;border-radius:12px;padding:15px 17px;margin-bottom:12px}
+.hd h1{margin:0;font-size:17px}
 .hd .sub{margin-top:5px;font-size:12px;color:#a9aeb8;line-height:1.7}
-.card{background:var(--card);border-radius:12px;padding:16px 18px;margin-bottom:12px;
-      border:1px solid var(--line)}
+.card{background:var(--card);border-radius:12px;padding:15px 17px;margin-bottom:12px;border:1px solid var(--line)}
 h2{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
-.bar{width:4px;height:15px;border-radius:2px;display:inline-block}
+h2 .n{margin-left:auto;font-size:12px;color:var(--sub);font-weight:400}
+.bar{width:4px;height:15px;border-radius:2px}
 .b-g{background:var(--green)}.b-r{background:var(--red)}.b-b{background:var(--blue)}
-.b-p{background:var(--purple)}
+.b-p{background:var(--purple)}.b-o{background:var(--orange)}
 label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px}
-input[type=text],input[type=password],input[type=number]{
-  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
-  font-size:15px;background:var(--bg);color:var(--txt)}
-button{width:100%;padding:13px;border:0;border-radius:9px;font-size:15px;font-weight:600;
-       background:var(--blue);color:#fff;cursor:pointer;margin-top:10px}
+input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+      font-size:15px;background:var(--bg);color:var(--txt)}
+button{border:0;border-radius:9px;font-size:15px;font-weight:600;background:var(--blue);
+       color:#fff;cursor:pointer;padding:12px;width:100%}
 button:disabled{opacity:.45}
 button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);font-weight:400}
-button.danger{background:var(--red)}
-.item{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;
-      display:flex;gap:11px;align-items:flex-start}
-.item.on{border-color:var(--green);background:rgba(0,168,112,.06)}
-.item.sell.on{border-color:var(--red);background:rgba(245,63,63,.06)}
-.chk{width:24px;height:24px;flex:0 0 24px;border:2px solid var(--line);border-radius:7px;
-     display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;
-     margin-top:2px;cursor:pointer;user-select:none}
-.item.on .chk{background:var(--green);border-color:var(--green)}
-.item.sell.on .chk{background:var(--red);border-color:var(--red)}
-.body{flex:1;min-width:0}
+.mini-btn{width:auto;padding:6px 12px;font-size:12px;font-weight:500;border-radius:7px}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:9px;
+      display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.item.on{border-color:var(--green);background:rgba(0,168,112,.07)}
+.item.sell.on{border-color:var(--red);background:rgba(245,63,63,.07)}
+.chk{width:23px;height:23px;flex:0 0 23px;border:2px solid var(--line);border-radius:7px;
+     display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;margin-top:2px}
+.item.on .chk{background:var(--green);border-color:var(--green);color:#fff}
+.item.sell.on .chk{background:var(--red);border-color:var(--red);color:#fff}
+.bd{flex:1;min-width:0}
+.row1{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .nm{font-size:16px;font-weight:700}
-.sym{font-size:12px;color:var(--sub);margin-left:6px;font-family:ui-monospace,Consolas,monospace}
-.meta{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.8}
-.kv{display:inline-block;background:var(--bg);border-radius:4px;padding:1px 7px;margin:0 4px 4px 0}
+.sym{font-size:11px;color:var(--sub);margin-left:6px;font-family:ui-monospace,Consolas,monospace}
+.amt{font-weight:700;white-space:nowrap}
+.a-g{color:var(--green)}.a-r{color:var(--red)}.a-o{color:var(--orange)}
+.tag{display:inline-block;background:rgba(0,168,112,.14);color:var(--green);font-size:10px;
+     padding:1px 6px;border-radius:3px;margin-left:5px}
+.why{margin-top:8px;font-size:12px;line-height:1.95}
+.wt{display:inline-block;background:var(--txt);color:var(--card);font-size:10px;
+    padding:2px 7px;border-radius:3px;margin-right:6px}
+.kv{display:inline-block;background:var(--soft);border-radius:4px;padding:2px 7px;margin:0 4px 4px 0;color:var(--sub)}
+.kv b{color:var(--txt)}
 .px{margin-top:9px;display:none;gap:8px;align-items:center}
 .item.on .px{display:flex}
 .px input{flex:1;padding:8px 10px;font-size:14px}
-.px span{font-size:12px;color:var(--sub);white-space:nowrap}
-.empty{text-align:center;color:var(--sub);padding:22px;font-size:13px;
-       border:1px dashed var(--line);border-radius:10px}
+.px span{font-size:11px;color:var(--sub);white-space:nowrap}
+.empty{text-align:center;color:var(--sub);padding:20px;font-size:13px;border:1px dashed var(--line);border-radius:10px}
 .grid{display:flex;flex-wrap:wrap;gap:8px}
-.stat{flex:1;min-width:96px;background:var(--bg);border-radius:8px;padding:10px 12px}
-.stat .v{font-size:18px;font-weight:700}.stat .k{font-size:11px;color:var(--sub);margin-top:3px}
+.stat{flex:1;min-width:88px;background:var(--soft);border-radius:8px;padding:10px 11px}
+.stat .v{font-size:18px;font-weight:700;line-height:1.2}
+.stat .k{font-size:11px;color:var(--sub);margin-top:3px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left}
+td,th{padding:7px 5px;border-bottom:1px solid var(--line);text-align:left}
 th{color:var(--sub);font-weight:500;font-size:11px}
-td.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
-.msg{padding:11px 13px;border-radius:9px;font-size:13px;line-height:1.7;margin-bottom:12px}
-.msg.err{background:rgba(245,63,63,.12);color:var(--red)}
-.msg.ok{background:rgba(0,168,112,.12);color:var(--green)}
-.msg.warn{background:rgba(255,125,0,.12);color:var(--orange)}
-.mini{font-size:12px;color:var(--sub);line-height:1.9}
-.bs{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);
-    padding:12px 18px calc(12px + env(safe-area-inset-bottom));margin:0 -18px -16px;
-    border-radius:0 0 12px 12px}
+td.n,th.n{text-align:right;font-family:ui-monospace,Consolas,monospace}
+.msg{padding:11px 13px;border-radius:9px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.m-err{background:rgba(245,63,63,.13);color:var(--red)}
+.m-ok{background:rgba(0,168,112,.13);color:var(--green)}
+.m-warn{background:rgba(255,125,0,.13);color:var(--orange)}
+.mini{font-size:12px;color:var(--sub);line-height:1.85}
+.bot{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
+     padding:11px 14px calc(11px + env(safe-area-inset-bottom));z-index:9;display:none}
+.bot.show{display:block}
+.bot .wrap2{max-width:700px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.bot .cnt{font-size:13px;color:var(--sub);white-space:nowrap}
+.pos-act{display:flex;gap:7px;margin-top:8px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:9px;text-align:center;font-size:13px;border-radius:8px;background:var(--soft);
+     color:var(--sub);cursor:pointer}
+.tab.on{background:var(--blue);color:#fff;font-weight:600}
 a{color:var(--blue)}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:12px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);
+      border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="hd">
-    <h1>趋势投资 · 记账</h1>
-    <div class="sub" id="hdsub">加载中…</div>
-  </div>
+  <div class="hd"><h1>趋势投资</h1><div class="sub" id="hdsub">加载中…</div></div>
   <div id="app"></div>
 </div>
+<div class="bot" id="bot"><div class="wrap2">
+  <div class="cnt" id="cnt"></div>
+  <button id="submit" onclick="submit()">提交</button>
+</div></div>
 
 <script>
-const OWNER = 'binbin1555';
-const REPO  = '-';                       // 私有数据仓库
-const DASH  = 'data/dashboard.json';
-const PEND  = 'data/pending_actions.json';
-const PATK  = 'trend_pat';
+const OWNER='binbin1555', REPO='-', PATK='trend_pat';
+const DASH='data/dashboard.json', PEND='data/pending_actions.json', WF='apply.yml';
+const $=s=>document.querySelector(s);
+let D=null, sel={}, tab='today';
 
-const $ = s => document.querySelector(s);
-const app = $('#app');
-let DATA = null, marks = {};
+const b64e=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+const b64d=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+const pat=()=>localStorage.getItem(PATK)||'';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const M=n=>Math.round(Number(n)||0).toLocaleString('en-US');
+const P=(n,d=2)=>(Number(n)||0).toFixed(d);
+const sign=n=>(Number(n)>=0?'+':'')+P(n);
+const col=n=>Number(n)>=0?'var(--green)':'var(--red)';
 
-/* ---------- UTF-8 安全的 base64 ---------- */
-const b64e = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
-const b64d = s => new TextDecoder().decode(
-  Uint8Array.from(atob(s.replace(/\n/g,'')), c => c.charCodeAt(0)));
+async function api(url,opt={}){
+  const r=await fetch(url,{...opt,headers:{Authorization:`token ${pat()}`,
+    Accept:'application/vnd.github+json','Content-Type':'application/json',...(opt.headers||{})}});
+  if(!r.ok) throw new Error(`${r.status} ${(await r.text()).slice(0,120)}`);
+  return r.status===204?{}:r.json();
+}
+const ghFile=(p,o)=>api(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${p}`,o);
 
-const pat = () => localStorage.getItem(PATK) || '';
-const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c =>
-  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const money = n => Math.round(n).toLocaleString('en-US');
+/* ---------- 授权页 ---------- */
+function setup(err){
+  $('#hdsub').textContent='需要授权';
+  $('#bot').classList.remove('show');
+  $('#app').innerHTML=`${err?`<div class="msg m-err"><b>无法读取</b><br>${esc(err)}</div>`:''}
+  <div class="card"><h2><span class="bar b-b"></span>连接私有数据仓库</h2>
+  <div class="mini" style="margin-bottom:12px">本页面<b>不含任何数据</b>，令牌只存在这台设备，直接与 GitHub 通信。<br><br>
+  ① 打开 <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=trend-dashboard" target="_blank">这个链接</a>（权限已勾好）<br>
+  ② <b>Expiration 选 No expiration</b>（否则到期后页面会失效）<br>
+  ③ 底部 Generate token，复制 <code>ghp_</code> 开头的字符</div>
+  <label>Personal Access Token</label>
+  <input type="password" id="pt" placeholder="ghp_..." autocomplete="off">
+  <button style="margin-top:10px" onclick="savePat()">保存并加载</button></div>`;
+}
+window.savePat=()=>{const v=$('#pt').value.trim(); if(v){localStorage.setItem(PATK,v); load();}};
+window.resetPat=()=>{if(confirm('清除本机令牌？')){localStorage.removeItem(PATK);setup();}};
+window.setTab=t=>{tab=t;render();window.scrollTo(0,0)};
 
-async function gh(path, opt={}) {
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
-    ...opt,
-    headers: {Authorization:`token ${pat()}`, Accept:'application/vnd.github+json',
-              'Content-Type':'application/json', ...(opt.headers||{})}
-  });
-  if (!r.ok) {
-    const t = await r.text();
-    throw new Error(`${r.status} ${r.statusText} — ${t.slice(0,140)}`);
-  }
-  return r.json();
+/* ---------- 渲染 ---------- */
+function render(){
+  const d=D, c=d.config||{}, e=d.equity||{}, p=d.perf||{};
+  $('#hdsub').innerHTML=`数据日期 <b style="color:#fff">${esc(d.asof)}</b>　·　纪律 ${esc(d.version)}
+    ${d.mode==='apply'?'　·　<span style="color:#ffc53d">记账后已刷新</span>':''}<br>
+    更新于 ${esc(d.generated_at)}　·　接口余额 ${P(d.balance)} 元`;
+
+  let h='';
+  h+=`<div class="tabs">
+    <div class="tab ${tab==='today'?'on':''}" onclick="setTab('today')">今日操作</div>
+    <div class="tab ${tab==='hold'?'on':''}" onclick="setTab('hold')">持仓 ${d.pos_count||0}</div>
+    <div class="tab ${tab==='perf'?'on':''}" onclick="setTab('perf')">绩效</div>
+    <div class="tab ${tab==='hist'?'on':''}" onclick="setTab('hist')">历史</div></div>`;
+
+  if(d.receipts&&d.receipts.length)
+    h+=`<div class="msg m-ok"><b>✅ 已记录</b><br>${d.receipts.map(esc).join('<br>')}</div>`;
+  (d.alerts||[]).forEach(a=>h+=`<div class="msg m-err"><b>⚠</b> ${esc(a)}</div>`);
+  if(d.low_balance) h+=`<div class="msg m-warn"><b>⚠ 接口余额偏低</b><br>当前 ${P(d.balance)} 元，
+    约可支撑 ${P(d.runway_days,1)} 个交易日。请在「趋势动物 Pro」小程序 → 我的 → 接入 AI Agent 充值。</div>`;
+
+  if(tab==='today') h+=viewToday(d,c);
+  if(tab==='hold')  h+=viewHold(d,e);
+  if(tab==='perf')  h+=viewPerf(d,p,e);
+  if(tab==='hist')  h+=viewHist(d);
+
+  h+=`<div class="card"><button class="ghost" onclick="load()">刷新数据</button>
+    <button class="ghost" style="margin-top:8px" onclick="resetPat()">清除本机令牌</button>
+    <div class="mini" style="margin-top:10px;text-align:center">
+    趋势动物指标仅供参考，不构成投资建议，交易盈亏自负</div></div>`;
+  $('#app').innerHTML=h;
+  updateBar();
 }
 
-/* ---------- PAT 设置页 ---------- */
-function setupView(err) {
-  $('#hdsub').textContent = '首次使用需要授权';
-  app.innerHTML = `
-  ${err ? `<div class="msg err"><b>读取失败</b><br>${esc(err)}</div>` : ''}
-  <div class="card">
-    <h2><span class="bar b-b"></span>连接你的私有数据仓库</h2>
-    <div class="mini" style="margin-bottom:12px">
-      本页面<b>不含任何数据</b>，也不会把你的令牌发给任何第三方——令牌只存在这台设备的浏览器里，
-      直接与 GitHub 通信。<br><br>
-      <b>怎么获取令牌：</b><br>
-      ① 打开 <a href="https://github.com/settings/tokens/new?scopes=repo&description=trend-dashboard" target="_blank">这个链接</a>（会自动勾好权限）<br>
-      ② 页面最下方点 <b>Generate token</b><br>
-      ③ 复制那串 <code>ghp_</code> 开头的字符，粘贴到下面
-    </div>
-    <label>GitHub Personal Access Token</label>
-    <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
-    <button onclick="savePat()">保存并加载</button>
+function viewToday(d,c){
+  const buys=d.buys||[], sells=d.sells||[];
+  let h=`<div class="card"><div class="grid">
+    <div class="stat"><div class="v" style="color:var(--green)">${buys.length}</div><div class="k">买入候选</div></div>
+    <div class="stat"><div class="v" style="color:var(--red)">${sells.filter(s=>s.action==='sell_all').length}</div><div class="k">清仓</div></div>
+    <div class="stat"><div class="v" style="color:var(--orange)">${sells.filter(s=>s.action!=='sell_all').length}</div><div class="k">减仓</div></div>
+    <div class="stat"><div class="v">${d.pos_count||0}/${c.max_positions||25}</div><div class="k">持仓</div></div>
+  </div></div>`;
+
+  h+=`<div class="card"><h2><span class="bar b-r"></span>卖出触发<span class="n">机械执行，不可豁免</span></h2>`;
+  if(!sells.length) h+=`<div class="empty">无卖出信号</div>`;
+  sells.forEach((s,i)=>{
+    h+=`<div class="item sell ${sel['s'+i]?'on':''}" id="it_s${i}" onclick="tg('s',${i})"><div class="chk">✓</div><div class="bd">
+      <div class="row1"><div><span class="nm">${esc(s.name)}</span><span class="sym">${esc(s.symbol||'')}</span></div>
+      <div class="amt a-r">${s.action==='sell_all'?'全部清仓':'减仓 30%'}</div></div>
+      <div class="why"><span class="wt">为什么卖</span>
+        <span class="kv">触发 <b>${esc(s.trigger)}</b></span><span class="kv">${esc(s.reason)}</span>
+        <span class="kv">卖 <b>${M(s.shares)}</b>/${M(s.held)} 股</span>
+        <span class="kv">成本 <b>${P(s.avg_price,3)}</b></span>
+        <span class="kv">浮盈 <b style="color:${col(s.pnl_pct)}">${sign(s.pnl_pct)}%</b></span></div>
+      <div class="px" onclick="event.stopPropagation()">
+        <span>成交价</span><input type="number" step="0.001" id="sp${i}" value="${s.price}">
+        <span>股数</span><input type="number" step="100" id="ss${i}" value="${s.shares}"></div>
+    </div></div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="card"><h2><span class="bar b-g"></span>买入候选<span class="n">单只 ${M(c.per_amount)} 元</span></h2>`;
+  if(!buys.length) h+=`<div class="empty">今日无符合全部纪律的标的<br><span style="font-size:12px">按纪律 §四：空仓等待，不降低标准</span></div>`;
+  const ind={}; buys.forEach(b=>ind[b.industry]=(ind[b.industry]||0)+1);
+  const top=Object.entries(ind).sort((a,b)=>b[1]-a[1])[0];
+  if(top&&top[1]>=4) h+=`<div class="msg m-warn"><b>⚠ 行业高度集中</b><br>${buys.length} 只候选中
+    <b>${top[1]} 只属于「${esc(top[0])}」</b>。纪律 §4.1 不设行业上限（避免削弱捕捉肥尾能力），
+    全买将有 <b>${P(top[1]*(D.config.position_pct||0.04)*100,0)}%</b> 仓位压在同一行业。这是已知取舍。</div>`;
+  buys.forEach((b,i)=>{
+    const tags=(b.labels||'').split(';').filter(Boolean).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+    h+=`<div class="item ${sel['b'+i]?'on':''}" id="it_b${i}" onclick="tg('b',${i})"><div class="chk">✓</div><div class="bd">
+      <div class="row1"><div><span class="nm">${esc(b.name)}</span><span class="sym">${esc(b.symbol)}</span>${tags}</div>
+      <div class="amt a-g">${M(b.amount)} 元</div></div>
+      <div class="why"><span class="wt">为什么买</span>
+        <span class="kv">右侧第 <b>${esc(b.days)}</b> 天</span>
+        <span class="kv">温度 <b>${esc(b.temp)}</b></span>
+        <span class="kv">强度 <b>${P(b.strength,1)}</b></span>
+        <span class="kv">${esc(b.industry)}（<b>${esc(b.industry_temp)}</b>）</span>
+        <span class="kv">市值 <b>${M(b.market_cap)}</b> 亿</span>
+        <span class="kv">日额 <b>${P(b.amount1d,1)}</b> 亿</span>
+        <span class="kv">现价 <b>${P(b.price)}</b> · <b>${M(b.shares)}</b> 股</span></div>
+      <div class="px" onclick="event.stopPropagation()">
+        <span>成交价</span><input type="number" step="0.001" id="bp${i}" value="${b.price}">
+        <span>股数</span><input type="number" step="100" id="bs${i}" value="${b.shares}"></div>
+    </div></div>`;
+  });
+  h+=`</div>`;
+
+  const f=d.funnel||[];
+  if(f.length) h+=`<div class="card"><h2><span class="bar b-b"></span>为什么只有这些</h2>
+    <table><tr><th>环节</th><th class="n">剩余</th></tr>
+    ${f.map(x=>`<tr><td>${esc(x[0])}</td><td class="n">${x[1]}</td></tr>`).join('')}</table></div>`;
+
+  const mw=d.market_width||{};
+  if(mw.count!=null){const r=mw.count?mw.mktcap/mw.count:0;
+    h+=`<div class="card"><h2><span class="bar b-b"></span>市场环境</h2><div class="mini">
+    A股趋势右侧 <b>个数占比 ${P(mw.count*100,1)}%</b>　·　<b>市值占比 ${P(mw.mktcap*100,1)}%</b><br>
+    两者相差 ${P(r,1)} 倍，${r>3?'处于右侧的以大市值标的为主。':'右侧标的市值分布较均衡。'}<br>
+    <span style="opacity:.6">仅记录，不触发动作（纪律 §4.3）</span></div></div>`;}
+
+  const cl=d.calls||[];
+  h+=`<div class="card"><h2><span class="bar b-b"></span>接口费用</h2>
+    ${cl.length?`<table><tr><th>调用</th><th class="n">行</th><th class="n">元</th></tr>
+    ${cl.map(x=>`<tr><td>${esc(x.endpoint)}${x.note?' · '+esc(x.note):''}</td>
+    <td class="n">${x.rows}</td><td class="n">${P(x.cost,4)}</td></tr>`).join('')}
+    <tr style="font-weight:700"><td>合计</td><td class="n">—</td><td class="n">${P(d.cost,4)}</td></tr></table>`
+    :`<div class="empty">本次为记账刷新，未调用付费接口</div>`}
+    <div class="mini" style="margin-top:8px">余额 <b>${P(d.balance)}</b> 元　·　约可支撑 ${P(d.runway_days,1)} 个交易日</div></div>`;
+  return h;
+}
+
+function viewHold(d,e){
+  const pos=d.positions||[];
+  let h=`<div class="card"><h2><span class="bar b-p"></span>净值</h2><div class="grid">
+    <div class="stat"><div class="v">${M(e.total)}</div><div class="k">总净值</div></div>
+    <div class="stat"><div class="v">${M(e.cash)}</div><div class="k">现金</div></div>
+    <div class="stat"><div class="v">${M(e.holdings)}</div><div class="k">持仓市值</div></div>
+    <div class="stat"><div class="v" style="color:${col(-(e.drawdown_pct||0))}">${P(e.drawdown_pct)}%</div><div class="k">当前回撤</div></div>
+  </div></div>`;
+
+  h+=`<div class="card"><h2><span class="bar b-p"></span>持仓明细<span class="n">${pos.length} / ${d.config.max_positions}</span></h2>`;
+  if(!pos.length) h+=`<div class="empty">当前空仓</div>`;
+  pos.forEach((p,i)=>{
+    h+=`<div class="item" style="cursor:default"><div class="bd">
+      <div class="row1"><div><span class="nm">${esc(p.name)}</span><span class="sym">${esc(p.symbol||'')}</span></div>
+      <div class="amt" style="color:${col(p.pnl_pct)}">${sign(p.pnl_pct)}%　${sign(p.pnl,0)} 元</div></div>
+      <div class="why">
+        <span class="kv"><b>${M(p.shares)}</b> 股</span>
+        <span class="kv">成本 <b>${P(p.avg_price,3)}</b></span>
+        <span class="kv">现价 <b>${P(p.last)}</b></span>
+        <span class="kv">市值 <b>${M(p.market_value)}</b></span>
+        <span class="kv">${esc(p.industry||'')}</span>
+        <span class="kv">建仓 ${esc(p.first_buy)}</span>
+        ${p.s3_done?'<span class="kv">已止盈过</span>':''}</div>
+      <div class="pos-act">
+        <button class="mini-btn" style="background:var(--red)" onclick="manual(${i},'all')">清仓</button>
+        <button class="mini-btn" style="background:var(--orange)" onclick="manual(${i},'part')">减仓30%</button>
+      </div></div></div>`;
+  });
+  h+=`</div>`;
+  return h;
+}
+
+function viewPerf(d,p,e){
+  const pl=p.pl_ratio?P(p.pl_ratio):'—';
+  let h=`<div class="card"><h2><span class="bar b-p"></span>总览</h2><div class="grid">
+    <div class="stat"><div class="v" style="color:${col(p.total_return)}">${sign((p.total_return||0)*100)}%</div><div class="k">总收益率</div></div>
+    <div class="stat"><div class="v" style="color:${col(e.total-p.base)}">${sign((e.total||0)-(p.base||0),0)}</div><div class="k">总盈亏(元)</div></div>
+    <div class="stat"><div class="v">${P(p.max_drawdown_pct)}%</div><div class="k">最大回撤</div></div>
+    <div class="stat"><div class="v">${sign((p.annual_return||0)*100)}%</div><div class="k">年化(外推)</div></div>
+  </div><div class="grid" style="margin-top:8px">
+    <div class="stat"><div class="v">${P((p.win_rate||0)*100,0)}%</div><div class="k">胜率</div></div>
+    <div class="stat"><div class="v">${pl}</div><div class="k">盈亏比</div></div>
+    <div class="stat"><div class="v">${p.wins||0}/${p.losses||0}</div><div class="k">盈利/亏损单</div></div>
+    <div class="stat"><div class="v">${sign(p.expectancy_pct)}%</div><div class="k">单笔期望</div></div>
+  </div><div class="grid" style="margin-top:8px">
+    <div class="stat"><div class="v">${p.rounds||0}</div><div class="k">已完成单数</div></div>
+    <div class="stat"><div class="v">${P(p.avg_win_pct)}%</div><div class="k">盈利单均收益</div></div>
+    <div class="stat"><div class="v">${P(p.avg_loss_pct)}%</div><div class="k">亏损单均亏损</div></div>
+    <div class="stat"><div class="v">${P(p.avg_holding_days,0)}</div><div class="k">平均持仓天</div></div>
   </div>`;
-}
-window.savePat = () => {
-  const v = $('#pat').value.trim();
-  if (!v) return;
-  localStorage.setItem(PATK, v);
-  load();
-};
-window.resetPat = () => {
-  if (confirm('清除本机保存的令牌？')) { localStorage.removeItem(PATK); setupView(); }
-};
+  if(d.perf_warnings&&d.perf_warnings.length)
+    h+=`<div class="mini" style="margin-top:11px">${d.perf_warnings.map(w=>'· '+w.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')).join('<br>')}</div>`;
+  h+=`</div>`;
 
-/* ---------- 主视图 ---------- */
-function render() {
-  const d = DATA, cap = 74400;
-  $('#hdsub').innerHTML =
-    `数据日期 <b style="color:#fff">${esc(d.asof)}</b>　·　纪律 ${esc(d.version)}<br>`+
-    `生成于 ${esc(d.generated_at)}　·　余额 ${Number(d.balance).toFixed(2)} 元`;
+  const st=d.signal_tracking;
+  h+=`<div class="card"><h2><span class="bar b-o"></span>信号跟踪<span class="n">纪律有效性验证</span></h2>`;
+  if(!st||!st.length) h+=`<div class="empty">跟踪中，尚无观测<br><span style="font-size:12px">每个候选（无论是否买入）持续跟踪 30 个交易日</span></div>`;
+  else h+=`<table><tr><th>信号后</th><th class="n">样本</th><th class="n">平均收益</th><th class="n">上涨占比</th></tr>
+    ${st.map(x=>`<tr><td>第 ${x.day} 日</td><td class="n">${x.n}</td>
+    <td class="n" style="color:${col(x.avg)}">${sign(x.avg)}%</td><td class="n">${P(x.win,1)}%</td></tr>`).join('')}</table>
+    <div class="mini" style="margin-top:8px">记录纪律筛出的每个信号后续表现，与你是否真买无关。样本足够后才能判断纪律有效性。</div>`;
+  h+=`</div>`;
 
-  const buys = d.buys||[], sells = d.sells||[], pos = d.positions||[];
-
-  let h = '';
-
-  /* 买入 */
-  h += `<div class="card"><h2><span class="bar b-g"></span>买入候选 · ${buys.length}</h2>`;
-  if (!buys.length) h += `<div class="empty">今日无符合纪律的候选<br><span style="font-size:12px">按纪律 §四：空仓等待，不降低标准</span></div>`;
-  buys.forEach((b,i) => {
-    h += `<div class="item" id="bi${i}" onclick="tog('b',${i})">
-      <div class="chk">✓</div><div class="body">
-        <div><span class="nm">${esc(b.name)}</span><span class="sym">${esc(b.symbol)}</span></div>
-        <div class="meta">
-          <span class="kv">建议 <b>${money(b.shares)}</b> 股</span>
-          <span class="kv">约 <b>${money(b.amount)}</b> 元</span>
-          <span class="kv">右侧第 <b>${esc(b.days)}</b> 天</span>
-          <span class="kv">强度 <b>${Number(b.strength).toFixed(1)}</b></span>
-          <span class="kv">${esc(b.industry)}</span>
-        </div>
-        <div class="px" onclick="event.stopPropagation()">
-          <span>成交价</span>
-          <input type="number" step="0.001" id="bp${i}" value="${b.price}">
-          <span>股数</span>
-          <input type="number" step="100" id="bs${i}" value="${b.shares}">
-        </div>
-      </div></div>`;
-  });
-  h += `</div>`;
-
-  /* 卖出 */
-  h += `<div class="card"><h2><span class="bar b-r"></span>卖出触发 · ${sells.length}</h2>`;
-  if (!sells.length) h += `<div class="empty">无卖出信号</div>`;
-  sells.forEach((s,i) => {
-    h += `<div class="item sell" id="si${i}" onclick="tog('s',${i})">
-      <div class="chk">✓</div><div class="body">
-        <div><span class="nm">${esc(s.name)}</span><span class="sym">${esc(s.symbol||'')}</span></div>
-        <div class="meta">
-          <span class="kv">${s.action==='sell_all'?'全部清仓':'减仓 30%'}</span>
-          <span class="kv"><b>${money(s.shares)}</b> 股</span>
-          <span class="kv">触发 <b>${esc(s.trigger)}</b></span>
-          <span class="kv">${esc(s.reason)}</span>
-        </div>
-        <div class="px" onclick="event.stopPropagation()">
-          <span>成交价</span>
-          <input type="number" step="0.001" id="sp${i}" value="${s.price}">
-          <span>股数</span>
-          <input type="number" step="100" id="ss${i}" value="${s.shares}">
-        </div>
-      </div></div>`;
-  });
-  h += `</div>`;
-
-  /* 提交 */
-  if (buys.length || sells.length) {
-    h += `<div class="card"><div class="mini">勾选你<b>实际成交</b>的标的。价格默认用收盘价，
-      若你挂涨跌停价在开盘成交，请手动改成真实成交价——绩效统计全靠它。</div>
-      <button id="submit" onclick="submit()">提交记账</button>
-      <div class="mini" style="margin-top:8px;text-align:center">未勾选的不会被记录</div></div>`;
+  const ec=d.equity_curve||[];
+  if(ec.length>1){
+    const mx=Math.max(...ec.map(x=>x.total)), mn=Math.min(...ec.map(x=>x.total)), rg=mx-mn||1;
+    const pts=ec.map((x,i)=>`${i/(ec.length-1)*100},${40-(x.total-mn)/rg*36}`).join(' ');
+    h+=`<div class="card"><h2><span class="bar b-p"></span>净值曲线</h2>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" style="width:100%;height:110px">
+      <polyline points="${pts}" fill="none" stroke="var(--blue)" stroke-width="0.8"/></svg>
+      <div class="mini">${esc(ec[0].date)} → ${esc(ec[ec.length-1].date)}　·　${ec.length} 个交易日</div></div>`;
   }
-
-  /* 持仓 */
-  h += `<div class="card"><h2><span class="bar b-p"></span>当前持仓 · ${pos.length}</h2>`;
-  if (!pos.length) h += `<div class="empty">当前空仓</div>`;
-  else {
-    h += `<table><tr><th>标的</th><th class="n">股数</th><th class="n">成本</th><th class="n">现价</th><th class="n">浮盈</th></tr>`;
-    pos.forEach(p => { h += `<tr><td>${esc(p.name)}</td><td class="n">${money(p.shares)}</td>
-      <td class="n">${Number(p.avg_price).toFixed(3)}</td><td class="n">${Number(p.last).toFixed(2)}</td>
-      <td class="n" style="color:${p.pnl_pct>=0?'var(--green)':'var(--red)'}">${p.pnl_pct>=0?'+':''}${Number(p.pnl_pct).toFixed(2)}%</td></tr>`; });
-    h += `</table>`;
-  }
-  const e = d.equity||{};
-  h += `<div class="mini" style="margin-top:10px">现金 ${money(e.cash||0)} 元　·
-    持仓市值 ${money(e.holdings||0)} 元　·　总净值 <b>${money(e.total||0)}</b> 元</div></div>`;
-
-  /* 绩效 */
-  const p = d.perf||{};
-  h += `<div class="card"><h2><span class="bar b-p"></span>绩效</h2>`;
-  if (!p.rounds && !pos.length) h += `<div class="empty">尚无交易记录</div>`;
-  else {
-    h += `<div class="grid">
-      <div class="stat"><div class="v">${((p.total_return||0)*100).toFixed(2)}%</div><div class="k">总收益率</div></div>
-      <div class="stat"><div class="v">${(p.max_drawdown_pct||0).toFixed(2)}%</div><div class="k">最大回撤</div></div>
-      <div class="stat"><div class="v">${p.wins||0}/${p.losses||0}</div><div class="k">盈利/亏损单</div></div>
-      <div class="stat"><div class="v">${p.pl_ratio?Number(p.pl_ratio).toFixed(2):'—'}</div><div class="k">盈亏比</div></div>
-    </div>`;
-    if (p.sample_warning) h += `<div class="msg warn" style="margin-top:10px">已完成 ${p.rounds||0} 单（&lt;30），胜率与盈亏比<b>样本量不足，不具统计意义</b></div>`;
-  }
-  h += `</div>`;
-
-  h += `<div class="card"><button class="ghost" onclick="load()">刷新</button>
-        <button class="ghost" onclick="resetPat()">清除本机令牌</button>
-        <div class="mini" style="margin-top:10px;text-align:center">
-        趋势动物指标仅供参考，不构成投资建议，交易盈亏自负</div></div>`;
-
-  app.innerHTML = h;
+  return h;
 }
 
-window.tog = (t,i) => {
-  const el = document.getElementById(t+'i'+i);
-  el.classList.toggle('on');
-  marks[t+i] = el.classList.contains('on');
+function viewHist(d){
+  const tr=d.trades||[], rd=d.rounds||[];
+  let h=`<div class="card"><h2><span class="bar b-b"></span>已完成轮次<span class="n">${rd.length} 单</span></h2>`;
+  if(!rd.length) h+=`<div class="empty">尚无完整买卖轮次</div>`;
+  else h+=`<table><tr><th>标的</th><th>区间</th><th class="n">天</th><th class="n">盈亏</th><th class="n">%</th></tr>
+    ${rd.map(r=>`<tr><td>${esc(r.name)}<br><span class="mini">${esc(r.exit)}</span></td>
+    <td class="mini">${esc(r.open_date)}<br>${esc(r.close_date)}</td><td class="n">${esc(r.days)}</td>
+    <td class="n" style="color:${col(r.pnl)}">${sign(r.pnl,0)}</td>
+    <td class="n" style="color:${col(r.pnl_pct)}">${sign(r.pnl_pct)}%</td></tr>`).join('')}</table>`;
+  h+=`</div>`;
+
+  h+=`<div class="card"><h2><span class="bar b-b"></span>交易流水<span class="n">${tr.length} 笔</span></h2>`;
+  if(!tr.length) h+=`<div class="empty">尚无交易记录</div>`;
+  else h+=`<table><tr><th>日期</th><th>标的</th><th>操作</th><th class="n">股数</th><th class="n">价格</th><th class="n">金额</th></tr>
+    ${tr.map(t=>{const isBuy=t.action==='buy';
+    return `<tr><td class="mini">${esc(t.date)}</td><td>${esc(t.name)}</td>
+    <td style="color:${isBuy?'var(--green)':'var(--red)'}">${isBuy?'买入':(t.action==='sell_all'?'清仓':'减仓')}
+    <span class="mini">${esc(t.trigger)}</span></td>
+    <td class="n">${M(t.shares)}</td><td class="n">${P(t.price,3)}</td>
+    <td class="n">${M(t.amount)}<br><span class="mini">费${P(t.fee)}</span></td></tr>`}).join('')}</table>`;
+  h+=`</div>`;
+  return h;
+}
+
+/* ---------- 选择与提交 ---------- */
+window.tg=(t,i)=>{
+  sel[t+i]=!sel[t+i];
+  const el=document.getElementById('it_'+t+i);
+  if(el) el.classList.toggle('on', sel[t+i]);
+  updateBar();   // 不整页重渲染，否则会清掉用户改过的成交价/股数
+};
+window.manual=(i,kind)=>{
+  const p=D.positions[i];
+  const n=kind==='all'?p.shares:Math.max(100,Math.floor(p.shares*0.3/100)*100);
+  if(!confirm(`${kind==='all'?'清仓':'减仓30%'} ${p.name}\n${n} 股 @ ${p.last} 元\n\n确认后将记入交易流水`)) return;
+  submitActions([{action:'sell',tmId:p.tmId,name:p.name,symbol:p.symbol,
+    trigger:kind==='all'?'MANUAL':'MANUAL-S3',shares:n,price:p.last,note:'面板手动'}]);
 };
 
-/* ---------- 提交 ---------- */
-window.submit = async () => {
-  const btn = $('#submit');
-  btn.disabled = true; btn.textContent = '提交中…';
-  try {
-    const acts = [];
-    (DATA.buys||[]).forEach((b,i) => { if (marks['b'+i]) acts.push({
-      action:'buy', tmId:b.tmId, name:b.name, symbol:b.symbol, industry:b.industry,
-      shares:parseInt($('#bs'+i).value)||b.shares,
-      price:parseFloat($('#bp'+i).value)||b.price, note:'面板记账'}); });
-    (DATA.sells||[]).forEach((s,i) => { if (marks['s'+i]) acts.push({
-      action:'sell', tmId:s.tmId, name:s.name, symbol:s.symbol, trigger:s.trigger,
-      shares:parseInt($('#ss'+i).value)||s.shares,
-      price:parseFloat($('#sp'+i).value)||s.price, note:'面板记账'}); });
+function updateBar(){
+  const n=Object.values(sel).filter(Boolean).length;
+  $('#cnt').textContent=n?`已选 ${n} 项`:'';
+  $('#bot').classList.toggle('show',n>0);
+  const b=$('#submit'); if(b){b.disabled=false;b.textContent='提交记账';}
+}
 
-    if (!acts.length) { alert('没有勾选任何标的'); btn.disabled=false; btn.textContent='提交记账'; return; }
+window.submit=()=>{
+  const acts=[];
+  (D.buys||[]).forEach((b,i)=>{if(sel['b'+i]) acts.push({action:'buy',tmId:b.tmId,name:b.name,
+    symbol:b.symbol,industry:b.industry,shares:parseInt($('#bs'+i).value)||b.shares,
+    price:parseFloat($('#bp'+i).value)||b.price,note:'面板记账'});});
+  (D.sells||[]).forEach((s,i)=>{if(sel['s'+i]) acts.push({action:'sell',tmId:s.tmId,name:s.name,
+    symbol:s.symbol,trigger:s.trigger,shares:parseInt($('#ss'+i).value)||s.shares,
+    price:parseFloat($('#sp'+i).value)||s.price,note:'面板记账'});});
+  if(!acts.length) return alert('未选择任何标的');
+  submitActions(acts);
+};
 
-    let sha = null;
-    try { sha = (await gh(PEND)).sha; } catch(e) { /* 文件不存在则新建 */ }
-    const body = {
-      message: `记账: ${DATA.asof} 共 ${acts.length} 笔（面板提交）`,
-      content: b64e(JSON.stringify(acts, null, 1)),
-      ...(sha ? {sha} : {})
-    };
-    await gh(PEND, {method:'PUT', body: JSON.stringify(body)});
+async function submitActions(acts){
+  const b=$('#submit'); if(b){b.disabled=true;b.innerHTML='<span class="spin"></span> 提交中…';}
+  $('#bot').classList.add('show');
+  try{
+    let sha=null;
+    try{sha=(await ghFile(PEND)).sha;}catch(e){}
+    await ghFile(PEND,{method:'PUT',body:JSON.stringify({
+      message:`记账 ${D.asof}：${acts.length} 笔`,
+      content:b64e(JSON.stringify(acts,null,1)),...(sha?{sha}:{})})});
 
-    app.insertAdjacentHTML('afterbegin',
-      `<div class="msg ok"><b>✅ 已提交 ${acts.length} 笔</b><br>
-       ${acts.map(a=>`${a.action==='buy'?'买入':'卖出'} ${esc(a.name)} ${money(a.shares)} 股 @${a.price}`).join('<br>')}
-       <br><br>下一次每日运行（北京时间 19:00）会写入交易流水，并在日报顶部回执确认。</div>`);
-    btn.textContent = '已提交';
-    window.scrollTo({top:0, behavior:'smooth'});
-  } catch (e) {
-    alert('提交失败：' + e.message);
-    btn.disabled = false; btn.textContent = '重试提交';
+    if(b) b.innerHTML='<span class="spin"></span> 处理中…';
+    await api(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`,
+      {method:'POST',body:JSON.stringify({ref:'main'})});
+
+    const before=D.generated_at;
+    for(let i=0;i<30;i++){
+      await new Promise(r=>setTimeout(r,4000));
+      if(b) b.innerHTML=`<span class="spin"></span> 处理中… ${i*4}s`;
+      try{
+        const f=await ghFile(DASH+'?t='+Date.now());
+        const nd=JSON.parse(b64d(f.content));
+        if(nd.generated_at!==before){D=nd;sel={};render();
+          window.scrollTo({top:0,behavior:'smooth'});return;}
+      }catch(e){}
+    }
+    alert('已提交，但后台处理超时未确认。稍后点「刷新数据」查看结果。');
+    if(b){b.disabled=false;b.textContent='提交记账';}
+  }catch(e){
+    alert('提交失败：'+e.message);
+    if(b){b.disabled=false;b.textContent='重试提交';}
   }
-};
+}
 
 /* ---------- 加载 ---------- */
-async function load() {
-  if (!pat()) return setupView();
-  $('#hdsub').textContent = '加载中…';
-  app.innerHTML = '<div class="card"><div class="empty">正在从私有仓库读取…</div></div>';
-  try {
-    const f = await gh(DASH);
-    DATA = JSON.parse(b64d(f.content));
-    marks = {};
-    render();
-  } catch (e) {
-    if (String(e.message).startsWith('401') || String(e.message).startsWith('403'))
-      setupView('令牌无效或权限不足，请重新生成（需要 repo 权限）。\n' + e.message);
-    else if (String(e.message).startsWith('404'))
-      setupView('找不到数据文件。请先让每日任务至少成功运行一次。\n' + e.message);
-    else setupView(e.message);
+async function load(){
+  if(!pat()) return setup();
+  $('#hdsub').textContent='加载中…';
+  $('#app').innerHTML='<div class="card"><div class="empty"><span class="spin"></span> 正在从私有仓库读取…</div></div>';
+  try{
+    const f=await ghFile(DASH+'?t='+Date.now());
+    D=JSON.parse(b64d(f.content)); sel={}; render();
+  }catch(e){
+    const m=String(e.message);
+    if(m.startsWith('401')||m.startsWith('403')) setup('令牌无效或权限不足（需 repo + workflow）。\n'+m);
+    else if(m.startsWith('404')) setup('找不到数据文件，请先让每日任务成功运行一次。\n'+m);
+    else setup(m);
   }
 }
 load();
