@@ -151,12 +151,15 @@ function render(){
     <div class="tab ${tab==='perf'?'on':''}" onclick="setTab('perf')">绩效</div>
     <div class="tab ${tab==='hist'?'on':''}" onclick="setTab('hist')">历史</div></div>`;
 
-  // 不再有「待入账」——勾选即入账。这里只提示哪些成本价还会在当晚自动校正。
+  // 不再有「待入账」——勾选即入账。这里只提示哪些成本价还会被自动校正。
+  // 文案按【事件】而非【日期】描述：校正发生在下一次取到新收盘数据的运行，
+  // 收盘后勾选要等次日晚间、盘中勾选则当晚即校正，写「今晚/明晚」必然有歧义。
   const rp=(d.positions||[]).filter(x=>x.price_source==='signal_pending');
   if(rp.length) h+=`<div class="msg m-warn"><b>ℹ ${rp.length} 笔成本价待校正</b><br>
     ${rp.map(x=>esc(x.name)).join('、')} 现按信号日收盘价记账。<br>
-    实际成交在次日开盘，强势股高开概率大——<b>当晚运行时会自动改为成交日收盘价</b>，
-    消除单向偏差。你手动填过的价不会被覆盖。</div>`;
+    你实际在下一个交易日开盘成交，强势股高开概率大——系统会在
+    <b>成交日收盘数据到达后</b>（即下一次运行时）自动改为成交日收盘价，消除单向偏差。<br>
+    不想等的话，点持仓里的「改成本价」填入真实成交价即可，手填价不会被覆盖。</div>`;
   if(d.receipts&&d.receipts.length)
     h+=`<div class="msg m-ok"><b>✅ 已记录</b><br>${d.receipts.map(esc).join('<br>')}</div>`;
   (d.alerts||[]).forEach(a=>h+=`<div class="msg m-err"><b>⚠</b> ${esc(a)}</div>`);
