@@ -305,16 +305,17 @@ function viewPerf(d,p,e){
   h+=`</div>`;
 
   const st=d.signal_tracking;
+  if(d.config.tracking_mode!=='off'){
   h+=`<div class="card"><h2><span class="bar b-o"></span>信号跟踪<span class="n">纪律有效性验证</span></h2>`;
   if(!st||!st.length) h+=`<div class="empty">跟踪中，尚无观测<br><span style="font-size:12px">每个候选（无论是否买入）持续跟踪 30 个交易日</span></div>`;
   else h+=`<table><tr><th>信号后</th><th class="n">样本</th><th class="n">平均收益</th><th class="n">上涨占比</th></tr>
     ${st.map(x=>`<tr><td>第 ${x.day} 日</td><td class="n">${x.n}</td>
     <td class="n" style="color:${col(x.avg)}">${sign(x.avg)}%</td><td class="n">${P(x.win,1)}%</td></tr>`).join('')}</table>
     <div class="mini" style="margin-top:8px">记录纪律筛出的每个信号后续表现，与你是否真买无关。样本足够后才能判断纪律有效性。</div>`;
-  h+=`</div>`;
+  h+=`</div>`; }
 
   const sd=d.signal_detail||[];
-  if(sd.length){
+  if(sd.length && d.config.tracking_mode!=='off'){
     h+=`<div class="card"><h2><span class="bar b-o"></span>逐只信号<span class="n">${sd.length} 个跟踪中</span></h2>
     <table><tr><th>信号日</th><th>标的</th><th class="n">信号价</th><th class="n">现价</th><th class="n">至今</th><th class="n">进度</th></tr>
     ${sd.map(x=>`<tr>
