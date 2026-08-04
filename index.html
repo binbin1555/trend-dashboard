@@ -293,12 +293,14 @@ function viewHold(d,e){
 }
 
 function viewPerf(d,p,e){
-  const pl=p.pl_ratio?P(p.pl_ratio):'—';
+  // 0 是有效值（从未盈利过），不能用真假判断——JS 里 0 是假值，
+  // 会把「确实为 0」显示成「无数据」。null 才代表无定义（没有亏损单）。
+  const pl=(p.pl_ratio==null)?'—':P(p.pl_ratio);
   let h=`<div class="card"><h2><span class="bar b-p"></span>总览</h2><div class="grid">
     <div class="stat"><div class="v" style="color:${col(p.total_return)}">${sign((p.total_return||0)*100)}%</div><div class="k">总收益率</div></div>
     <div class="stat"><div class="v" style="color:${col(D.total_pnl)}">${sign(D.total_pnl||0,0)}</div><div class="k">总盈亏(元)</div></div>
     <div class="stat"><div class="v">${P(p.max_drawdown_pct)}%</div><div class="k">最大回撤</div></div>
-    <div class="stat"><div class="v">${sign((p.annual_return||0)*100)}%</div><div class="k">年化(外推)</div></div>
+    <div class="stat"><div class="v">${p.annual_return==null?'—':sign(p.annual_return*100)+'%'}</div><div class="k">年化(外推)</div></div>
   </div><div class="grid" style="margin-top:8px">
     <div class="stat"><div class="v">${P((p.win_rate||0)*100,0)}%</div><div class="k">胜率</div></div>
     <div class="stat"><div class="v">${pl}</div><div class="k">盈亏比</div></div>
