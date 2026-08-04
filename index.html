@@ -270,7 +270,9 @@ function viewHold(d,e){
         <span class="kv">${esc(p.industry||'')}</span>
         <span class="kv">建仓 ${esc(p.first_buy)}</span>
         <span class="kv">建仓 <b>${M(p.orig_shares)}</b> 股 · 每次减 <b>${M(p.reduce_shares)}</b></span>
-        ${p.s3_done?'<span class="kv">已止盈过</span>':''}</div>
+        ${p.s3_boil_done?'<span class="kv">沸·已减</span>':''}
+        ${p.s3_champagne_done?'<span class="kv">香槟·已减</span>':''}
+        ${(p.temp_history||[]).length?`<span class="kv">温度 <b>${esc((p.temp_history[p.temp_history.length-1]||{}).temp||'')}</b></span>`:''}</div>
       <div class="pos-act">
         <button class="mini-btn" style="background:var(--red)" onclick="manual(${i},'all')">清仓</button>
         <button class="mini-btn" style="background:var(--orange)" onclick="manual(${i},'part')">减仓 1/3</button>
