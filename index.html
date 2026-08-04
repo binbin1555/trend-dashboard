@@ -151,6 +151,11 @@ function render(){
     <div class="tab ${tab==='perf'?'on':''}" onclick="setTab('perf')">绩效</div>
     <div class="tab ${tab==='hist'?'on':''}" onclick="setTab('hist')">历史</div></div>`;
 
+  const pd=d.pending||[];
+  if(pd.length) h+=`<div class="msg m-warn"><b>⏳ 待入账 ${pd.length} 笔</b><br>
+    ${pd.map(x=>`${x.action==='buy'?'买入':'卖出'} ${esc(x.name)} ${M(x.shares)} 股
+    ${x.manual_price?`@${P(x.manual_price,3)}（手填）`:'（按当日收盘价）'}`).join('<br>')}
+    <br><br><b>今晚运行时正式入账</b>——按成交当日收盘价，避免用前一日价造成的系统性偏差。</div>`;
   if(d.receipts&&d.receipts.length)
     h+=`<div class="msg m-ok"><b>✅ 已记录</b><br>${d.receipts.map(esc).join('<br>')}</div>`;
   (d.alerts||[]).forEach(a=>h+=`<div class="msg m-err"><b>⚠</b> ${esc(a)}</div>`);
@@ -398,7 +403,7 @@ window.manual=(i,kind)=>{
   const n=kind==='all'?p.shares:Math.max(100,Math.floor(p.shares*0.3/100)*100);
   if(!confirm(`${kind==='all'?'清仓':'减仓30%'} ${p.name}\n${n} 股 @ ${p.last} 元\n\n确认后将记入交易流水`)) return;
   submitActions([{action:'sell',tmId:p.tmId,name:p.name,symbol:p.symbol,
-    trigger:kind==='all'?'MANUAL':'MANUAL-S3',shares:n,price:p.last,note:'面板手动'}]);
+    trigger:kind==='all'?'MANUAL':'MANUAL-S3',shares:n,price:p.last,signal_price:p.last,note:'面板手动'}]);
 };
 
 function updateBar(){
@@ -424,11 +429,19 @@ async function submitActions(acts){
   const b=$('#submit'); if(b){b.disabled=true;b.innerHTML='<span class="spin"></span> 提交中…';}
   $('#bot').classList.add('show');
   try{
-    let sha=null;
-    try{sha=(await ghFile(PEND)).sha;}catch(e){}
+    // 与已有待入账合并：面板 PUT 是整文件替换，不合并会让先前提交丢失
+    let sha=null, exist=[];
+    try{
+      const f=await ghFile(PEND);
+      sha=f.sha;
+      try{exist=JSON.parse(b64d(f.content))||[];}catch(e){exist=[];}
+    }catch(e){}
+    const key=x=>`${x.action}:${x.tmId}`;
+    const seen=new Set(acts.map(key));
+    const merged=acts.concat(exist.filter(x=>!seen.has(key(x))));
     await ghFile(PEND,{method:'PUT',body:JSON.stringify({
-      message:`记账 ${D.asof}：${acts.length} 笔`,
-      content:b64e(JSON.stringify(acts,null,1)),...(sha?{sha}:{})})});
+      message:`记账 ${D.asof}：新增 ${acts.length} 笔，合计 ${merged.length} 笔`,
+      content:b64e(JSON.stringify(merged,null,1)),...(sha?{sha}:{})})});
 
     if(b) b.innerHTML='<span class="spin"></span> 处理中…';
     await api(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`,
