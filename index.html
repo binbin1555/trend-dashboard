@@ -311,6 +311,22 @@ function viewPerf(d,p,e){
     <div class="mini" style="margin-top:8px">记录纪律筛出的每个信号后续表现，与你是否真买无关。样本足够后才能判断纪律有效性。</div>`;
   h+=`</div>`;
 
+  const sd=d.signal_detail||[];
+  if(sd.length){
+    h+=`<div class="card"><h2><span class="bar b-o"></span>逐只信号<span class="n">${sd.length} 个跟踪中</span></h2>
+    <table><tr><th>信号日</th><th>标的</th><th class="n">信号价</th><th class="n">现价</th><th class="n">至今</th><th class="n">进度</th></tr>
+    ${sd.map(x=>`<tr>
+      <td class="mini">${esc(x.signal_date)}</td>
+      <td>${esc(x.name)}${x.bought?'<span class="tag">已买</span>':''}<br><span class="mini">${esc(x.industry||'')}</span></td>
+      <td class="n">${P(x.signal_price,2)}</td>
+      <td class="n">${x.last_close!=null?P(x.last_close,2):'—'}</td>
+      <td class="n" style="color:${x.ret_pct!=null?col(x.ret_pct):'var(--sub)'}">${x.ret_pct!=null?sign(x.ret_pct)+'%':'待观测'}</td>
+      <td class="n mini">${x.tracked}/${x.max_days}</td></tr>`).join('')}</table>
+    <div class="mini" style="margin-top:8px">
+    <b>「已买」标记</b>用于区分你实际买入的和只是符合纪律但没买的。
+    两者对比能回答一个关键问题：<b>是纪律选股不行，还是我的执行不行。</b></div></div>`;
+  }
+
   const ec=d.equity_curve||[];
   if(ec.length>1){
     const mx=Math.max(...ec.map(x=>x.total)), mn=Math.min(...ec.map(x=>x.total)), rg=mx-mn||1;
