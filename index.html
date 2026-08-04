@@ -151,11 +151,12 @@ function render(){
     <div class="tab ${tab==='perf'?'on':''}" onclick="setTab('perf')">绩效</div>
     <div class="tab ${tab==='hist'?'on':''}" onclick="setTab('hist')">历史</div></div>`;
 
-  const pd=d.pending||[];
-  if(pd.length) h+=`<div class="msg m-warn"><b>⏳ 待入账 ${pd.length} 笔</b><br>
-    ${pd.map(x=>`${x.action==='buy'?'买入':'卖出'} ${esc(x.name)} ${M(x.shares)} 股
-    ${x.manual_price?`@${P(x.manual_price,3)}（手填）`:'（按当日收盘价）'}`).join('<br>')}
-    <br><br><b>今晚运行时正式入账</b>——按成交当日收盘价，避免用前一日价造成的系统性偏差。</div>`;
+  // 不再有「待入账」——勾选即入账。这里只提示哪些成本价还会在当晚自动校正。
+  const rp=(d.positions||[]).filter(x=>x.price_source==='signal_pending');
+  if(rp.length) h+=`<div class="msg m-warn"><b>ℹ ${rp.length} 笔成本价待校正</b><br>
+    ${rp.map(x=>esc(x.name)).join('、')} 现按信号日收盘价记账。<br>
+    实际成交在次日开盘，强势股高开概率大——<b>当晚运行时会自动改为成交日收盘价</b>，
+    消除单向偏差。你手动填过的价不会被覆盖。</div>`;
   if(d.receipts&&d.receipts.length)
     h+=`<div class="msg m-ok"><b>✅ 已记录</b><br>${d.receipts.map(esc).join('<br>')}</div>`;
   (d.alerts||[]).forEach(a=>h+=`<div class="msg m-err"><b>⚠</b> ${esc(a)}</div>`);
@@ -281,6 +282,7 @@ function viewHold(d,e){
       <div class="pos-act">
         <button class="mini-btn" style="background:var(--red)" onclick="manual(${i},'all')">清仓</button>
         <button class="mini-btn" style="background:var(--orange)" onclick="manual(${i},'part')">减仓 1/3</button>
+        <button class="mini-btn" style="background:var(--bg3);color:var(--fg)" onclick="repx(${i})">改成本价</button>
       </div></div></div>`;
   });
   h+=`</div>`;
@@ -397,6 +399,17 @@ window.tg=(t,i)=>{
   const el=document.getElementById('it_'+t+i);
   if(el) el.classList.toggle('on', sel[t+i]);
   updateBar();   // 不整页重渲染，否则会清掉用户改过的成交价/股数
+};
+window.repx=(i)=>{
+  const p=D.positions[i];
+  const v=prompt(`${p.name} 实际成交价（当前 ${p.avg_price}）
+
+填入真实成交价后，成本、盈亏、绩效会立即重算，
+且该价不再被当晚的自动校正覆盖。`, p.avg_price);
+  if(v===null) return;
+  const px=parseFloat(v);
+  if(!(px>0)){alert('价格无效');return;}
+  submitActions([{action:'reprice',tmId:p.tmId,name:p.name,price:px,note:'面板手动改价'}]);
 };
 window.manual=(i,kind)=>{
   const p=D.positions[i];
