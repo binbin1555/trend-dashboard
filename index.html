@@ -472,7 +472,7 @@ function updateBar(){
 window.submit=()=>{
   const acts=[];
   (D.buys||[]).forEach((b,i)=>{if(sel['b'+i]) acts.push({action:'buy',tmId:b.tmId,name:b.name,
-    symbol:b.symbol,industry:b.industry,shares:parseInt($('#bs'+i).value)||b.shares,
+    symbol:b.symbol,industry:b.industry,industry_temp:b.industry_temp,shares:parseInt($('#bs'+i).value)||b.shares,
     price:parseFloat($('#bp'+i).value)||b.price,note:'面板记账'});});
   (D.sells||[]).forEach((s,i)=>{if(sel['s'+i]) acts.push({action:'sell',tmId:s.tmId,name:s.name,
     symbol:s.symbol,trigger:s.trigger,shares:parseInt($('#ss'+i).value)||s.shares,
