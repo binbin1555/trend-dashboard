@@ -97,6 +97,9 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:12px}
 </div></div>
 
 <script>
+// 页面版本号。手机浏览器会缓存 index.html，出现「说加了功能却看不到」时，
+// 对照页脚这个号即可立刻判断是缓存还是真没加，不必猜。
+const PAGE_BUILD='2026-08-04.3';
 const OWNER='binbin1555', REPO='-', PATK='trend_pat';
 const DASH='data/dashboard.json', PEND='data/pending_actions.json', WF='apply.yml';
 const $=s=>document.querySelector(s);
@@ -170,6 +173,8 @@ function render(){
   if(tab==='hold')  h+=viewHold(d,e);
   if(tab==='perf')  h+=viewDiag(d)+viewPerf(d,p,e);
   if(tab==='hist')  h+=viewHist(d);
+  h+=`<div class="mini" style="text-align:center;padding:6px 0 2px;opacity:.6">
+    页面版本 ${PAGE_BUILD}　·　数据 ${esc(d.generated_at||'')}</div>`;
 
   h+=`<div class="card"><button class="ghost" onclick="load()">刷新数据</button>
     <button class="ghost" style="margin-top:8px" onclick="resetPat()">清除本机令牌</button>
